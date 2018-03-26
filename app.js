@@ -1,14 +1,23 @@
+
 console.log("game launched");
 
 let cols, rows;
-let w = 40;
+let w = 20;
 let grid = [];
 let geek;
-
+let geekImg1;
+let geekImg2;
+let scl = 40;
+let bitFood;
+function preload() {
+    geekImg1 = loadImage('assets/geek2.png');
+    geekImg2 = loadImage('assets/geek3.png');
+}
+// testGeek();
 function setup() {
     createCanvas(400,400);
-    cols = floor(width/w);
-    rows = floor(height/w);
+    cols = floor(width/scl);
+    rows = floor(height/scl);
     console.log(cols,rows);
 
     for(let j =0; j< rows; j++) {
@@ -19,7 +28,16 @@ function setup() {
     }
 
     geek = new Geek();
+    frameRate(10);
+    pickLocation();
+    // bitFood = createVector(random(height),random(width));
+}
 
+function pickLocation() {
+    let cols = floor(width/scl);
+    let rows = floor(height/scl);
+    bitFood = createVector(floor(random(cols)),floor(random(rows)))
+    bitFood.mult(scl);
 }
 
 function draw() {
@@ -29,32 +47,23 @@ function draw() {
     }
     geek.update();
     geek.show();
+    select('#score').html(geek.getScore());
+    if(geek.eat(bitFood)){
+       pickLocation(); 
+    };
+    fill(152,66,244);
+    rect(bitFood.x, bitFood.y, scl, scl);
+
 }
 
-function Cell(i, j) {
-    this.i = i;
-    this.j = j;
-    this.show = function() {
-        let x = this.i*w;
-        let y = this.j*w;
-        stroke(255);
-        noFill();
-        rect(x,y,w,w);
-    }
-}
-
-function Geek() {
-    this.x = 0;
-    this.y = 0;
-    this.xspeed = 1;
-    this.yspeed = 0;
-
-    this.update = function() {
-        this.x = this.x + this.xspeed;
-        this.y = this.y + this.yspeed;
-    }
-    this.show = function() {
-        fill(255);
-        rect(this.x, this.y, 10, 10);
+function keyPressed() {
+    if(keyCode === UP_ARROW) {
+        geek.direction(0,-1);
+    } else if(keyCode === DOWN_ARROW) {
+        geek.direction(0,1);
+    } else if(keyCode === RIGHT_ARROW) {
+        geek.direction(1,0);
+    } else if(keyCode === LEFT_ARROW) {
+        geek.direction(-1,0);
     }
 }
